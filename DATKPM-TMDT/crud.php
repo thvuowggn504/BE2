@@ -86,7 +86,9 @@ $products = $productDB->getAllProducts();
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container px-4 px-lg-5">
             <a class="navbar-brand" href="#!">TPV E-COMMERCE</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                     <li class="nav-item"><a class="nav-link active" aria-current="page" href="home1.php">Home</a></li>
@@ -116,7 +118,8 @@ $products = $productDB->getAllProducts();
                                 <h2>Manage <b>Product</b></h2>
                             </div>
                             <div class="col-sm-6">
-                                <a class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEmployeeModal"><i class="bi bi-pencil"></i><span>Add New Product</span></a>
+                                <a class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEmployeeModal"><i
+                                        class="bi bi-pencil"></i><span>Add New Product</span></a>
                             </div>
                         </div>
                     </div>
@@ -129,7 +132,8 @@ $products = $productDB->getAllProducts();
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
-                                <th><span class="custom-checkbox"><input type="checkbox" id="selectAll"><label for="selectAll"></label></span></th>
+                                <th><span class="custom-checkbox"><input type="checkbox" id="selectAll"><label
+                                            for="selectAll"></label></span></th>
                                 <th>ProductID</th>
                                 <th>ProductName</th>
                                 <th>CategoryID</th>
@@ -144,34 +148,52 @@ $products = $productDB->getAllProducts();
                             <?php if (!empty($products)): ?>
                                 <?php foreach ($products as $index => $product): ?>
                                     <tr>
-                                        <td><span class="custom-checkbox"><input type="checkbox" id="checkbox<?php echo $index + 1; ?>" name="options[]" value="<?php echo $product['ProductID']; ?>"><label for="checkbox<?php echo $index + 1; ?>"></label></span></td>
-                                        <td><?php echo htmlspecialchars($product['ProductID']); ?></td>
-                                        <td><?php echo htmlspecialchars($product['ProductName']); ?></td>
-                                        <td><?php echo htmlspecialchars($product['CategoryID']); ?></td>
-                                        <td><?php echo htmlspecialchars($product['Price']); ?></td>
-                                        <td><?php echo htmlspecialchars($product['Stock'] ?? 'N/A'); ?></td>
-                                        <td><?php echo htmlspecialchars($product['Description']); ?></td>
-                                        <td><?php echo htmlspecialchars($product['ImageURL'] ?? 'N/A'); ?></td>
+                                        <td><span class="custom-checkbox"><input type="checkbox"
+                                                    id="checkbox<?php echo $index + 1; ?>" name="options[]"
+                                                    value="<?php echo $product['ProductID']; ?>"><label
+                                                    for="checkbox<?php echo $index + 1; ?>"></label></span></td>
+                                        <td><?php echo $product['ProductID']; ?></td>
+                                        <td><?php echo $product['ProductName']; ?></td>
+                                        <td><?php echo $product['CategoryID']; ?></td>
+                                        <td><?php echo $product['Price']; ?></td>
+                                        <td><?php echo $product['Stock'] ?? 'N/A'; ?></td>
+                                        <td><?php echo $product['Description']; ?></td>
                                         <td>
-                                            <a href="#" class="edit" data-bs-toggle="modal" data-bs-target="#editEmployeeModal" 
-                                               data-id="<?php echo $product['ProductID']; ?>" 
-                                               data-name="<?php echo htmlspecialchars($product['ProductName']); ?>" 
-                                               data-price="<?php echo $product['Price']; ?>" 
-                                               data-category="<?php echo $product['CategoryID']; ?>" 
-                                               data-stock="<?php echo $product['Stock']; ?>" 
-                                               data-description="<?php echo htmlspecialchars($product['Description']); ?>" 
-                                               data-image="<?php echo htmlspecialchars($product['ImageURL']); ?>"><i class="bi bi-pencil"></i></a>
-                                            <a href="#" class="delete" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal" data-id="<?php echo $product['ProductID']; ?>"><i class="bi bi-trash"></i></a>
+                                            <?php if (!empty($product['ImageURL'])): ?>
+                                                <img src="public/img/<?php echo htmlspecialchars($product['ImageURL']); ?>"
+                                                alt="<?php echo $product['ProductName']; ?>"
+                                                style="max-width: 100px; height: auto;" loading="lazy">
+                                            <?php else: ?>
+                                                No image
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <a href="#" class="edit" data-bs-toggle="modal" data-bs-target="#editEmployeeModal"
+                                                data-id="<?php echo $product['ProductID']; ?>"
+                                                data-name="<?php echo $product['ProductName']; ?>"
+                                                data-price="<?php echo $product['Price']; ?>"
+                                                data-category="<?php echo $product['CategoryID']; ?>"
+                                                data-stock="<?php echo $product['Stock']; ?>"
+                                                data-description="<?php echo $product['Description']; ?>"
+                                                data-image="<?php echo $product['ImageURL']; ?>"><i
+                                                    class="bi bi-pencil"></i></a>
+                                            <a href="#" class="delete" data-bs-toggle="modal"
+                                                data-bs-target="#deleteEmployeeModal"
+                                                data-id="<?php echo $product['ProductID']; ?>"><i class="bi bi-trash"></i></a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
-                                <tr><td colspan="9">No products found.</td></tr>
+                                <tr>
+                                    <td colspan="9">No products found.</td>
+                                </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
                     <div class="clearfix">
-                        <div class="hint-text">Showing <b><?php echo count($products); ?></b> out of <b><?php echo count($products); ?></b> entries</div>
+                        <div class="hint-text">Showing <b><?php echo count($products); ?></b> out of
+                            <b><?php echo count($products); ?></b> entries
+                        </div>
                         <ul class="pagination">
                             <li class="page-item"><a href="#" class="page-link">Previous</a></li>
                             <li class="page-item active"><a href="#" class="page-link">1</a></li>
@@ -312,7 +334,7 @@ $products = $productDB->getAllProducts();
     <script>
         // Điền dữ liệu vào modal sửa
         document.querySelectorAll('.edit').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 const id = this.getAttribute('data-id');
                 const name = this.getAttribute('data-name');
                 const price = this.getAttribute('data-price');
@@ -333,7 +355,7 @@ $products = $productDB->getAllProducts();
 
         // Điền ID vào modal xóa
         document.querySelectorAll('.delete').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 const id = this.getAttribute('data-id');
                 document.getElementById('delete_product_id').value = id;
             });
