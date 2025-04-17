@@ -59,10 +59,29 @@ $username = $isLoggedIn ? $_SESSION['currentUser']['name'] : '';
 </head>
 
 <body>
-  <header>
+  <div class="hotline-bar">
+    <span>Hotline: 0346 638 136 * Tư vấn Laptop - Điện thoại... * Địa chỉ: CS1: Quận 1 - Đồng khởi</span>
+  </div>
+
+  <header class="header" style="border-bottom: 50px solid white; background: rgb(235, 235, 235);">
+    <!-- Phần còn lại của header giữ nguyên -->
     <div class="logo">
       <img src="public/img/logo.png" alt="logo" />
       <a href="">TPV E-COMMERCE</a>
+    </div>
+    <div class="header-slogan">
+      <div class="slogan-item">
+        <img src="public/img/header1.webp" alt="phone icon" class="slogan-icon" />
+        <span>Chất lượng đảm bảo</span>
+      </div>
+      <div class="slogan-item">
+        <img src="public/img/header2.webp" alt="phone icon" class="slogan-icon" />
+        <span>Vận chuyển siêu tốc</span>
+      </div>
+      <div class="slogan-item">
+        <img src="public/img/header3.webp" alt="phone icon" class="slogan-icon" />
+        <span>Tư vấn Hotline: 0346638136</span>
+      </div>
     </div>
     <nav>
       <a href="#">Home</a>
@@ -105,20 +124,11 @@ $username = $isLoggedIn ? $_SESSION['currentUser']['name'] : '';
   </header>
 
   <section>
-    <div class="container">
-      <div class="content">
-        <h1>Welcome</h1>
-        <p>
-          Discover thousands of high-quality products at unbeatable prices only at TPV <b>E_COMMERCE</b>.<br> We provide
-          a seamless, secure, and convenient online shopping experience,<br> making it easier than ever to find
-          everything you need.
-        </p>
-        <div class="action">
-          <button class="action-1">Action 1</button>
-          <button class="action-2">Action 2</button>
-        </div>
+    <div class="container" style="padding-top: 100px;">
+      <div class="content" style="margin-left: -160px; width: 900px;">
+        <img src="public/img/banner1.avif" alt="banner" style="border-radius: 5px; height: 400px;">
       </div>
-      <div class="card-stack">
+      <div class="card-stack" style="margin-left: 300px;">
         <?php if (count($latestProducts) >= 3): ?>
           <div class="card left" data-position="left">
             <img src="public/img/<?php echo htmlspecialchars($latestProducts[0]['ImageURL']); ?>"
@@ -145,13 +155,14 @@ $username = $isLoggedIn ? $_SESSION['currentUser']['name'] : '';
   <!-- Section danh sách sản phẩm -->
   <section class="products-list">
     <div class="container">
-      <h2>Danh Sách Sản Phẩm</h2>
+      <h2 class="dssp" style="color: white">Danh Sách Sản Phẩm</h2>
       <div class="products-grid">
         <?php foreach ($allProducts as $product): ?>
           <div class="product-item">
             <div class="product-image">
-              <img src="<?php echo !empty($product['ImageURL']) ? 'public/img/' . htmlspecialchars($product['ImageURL']) : 'public/img/placeholder.jpg'; ?>" 
-                   alt="<?php echo htmlspecialchars($product['ProductName']); ?>">
+              <img
+                src="<?php echo !empty($product['ImageURL']) ? 'public/img/' . htmlspecialchars($product['ImageURL']) : 'public/img/placeholder.jpg'; ?>"
+                alt="<?php echo htmlspecialchars($product['ProductName']); ?>">
             </div>
             <div class="product-info">
               <h3 class="product-name"><?php echo htmlspecialchars($product['ProductName']); ?></h3>
