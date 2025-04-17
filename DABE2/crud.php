@@ -1,4 +1,73 @@
+<?php
+session_start(); // Bắt đầu session để kiểm tra trạng thái đăng nhập
 
+// Xử lý đăng xuất
+if (isset($_GET['logout'])) {
+    session_unset();
+    session_destroy();
+    header("Location: lg&rgt.php");
+    exit();
+}
+
+// Kiểm tra quyền truy cập
+if (!isset($_SESSION['currentUser']) || $_SESSION['currentUser']['userType'] !== 'Admin' || $_SESSION['currentUser']['email'] !== 'admin') {
+    header("Location: lg&rgt.php");
+    exit();
+}
+
+require_once 'Product_Database.php';
+$productDB = new Product_Database();
+
+// Khởi tạo thông báo
+$success_message = '';
+$error_message = '';
+
+// Xử lý thêm sản phẩm
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_product'])) {
+    $name = $_POST['name'];
+    $price = $_POST['price'];
+    $category_id = $_POST['category_id'];
+    $stock = $_POST['stock'];
+    $description = $_POST['description'];
+    $image_url = $_POST['image_url'];
+
+    if ($productDB->addProduct($name, $price, $category_id, $description, $stock, $image_url)) {
+        $success_message = "Product added successfully!";
+    } else {
+        $error_message = "Error adding product.";
+    }
+}
+
+// Xử lý sửa sản phẩm
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_product'])) {
+    $id = $_POST['product_id'];
+    $name = $_POST['name'];
+    $price = $_POST['price'];
+    $category_id = $_POST['category_id'];
+    $stock = $_POST['stock'];
+    $description = $_POST['description'];
+    $image_url = $_POST['image_url'];
+
+    if ($productDB->updateProduct($id, $name, $price, $category_id, $description, $stock, $image_url)) {
+        $success_message = "Product updated successfully!";
+    } else {
+        $error_message = "Error updating product.";
+    }
+}
+
+// Xử lý xóa sản phẩm
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_product'])) {
+    $id = $_POST['product_id'];
+    if ($productDB->deleteProduct($id)) {
+        $success_message = "Product deleted successfully!";
+    } else {
+        $error_message = "Error deleting product.";
+    }
+}
+
+// Lấy tất cả sản phẩm
+$products = $productDB->getAllProducts();
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -54,7 +123,13 @@
                             </div>
                         </div>
                     </div>
-                                                            <table class="table table-striped table-hover">
+                    <?php if (!empty($success_message)): ?>
+                        <div class="alert alert-success"><?php echo $success_message; ?></div>
+                    <?php endif; ?>
+                    <?php if (!empty($error_message)): ?>
+                        <div class="alert alert-danger"><?php echo $error_message; ?></div>
+                    <?php endif; ?>
+                    <table class="table table-striped table-hover">
                         <thead>
                             <tr>
                                 <th><span class="custom-checkbox"><input type="checkbox" id="selectAll"><label
@@ -70,259 +145,54 @@
                             </tr>
                         </thead>
                         <tbody>
-                                                                                                <tr>
+                            <?php if (!empty($products)): ?>
+                                <?php foreach ($products as $index => $product): ?>
+                                    <tr>
                                         <td><span class="custom-checkbox"><input type="checkbox"
-                                                    id="checkbox1" name="options[]"
-                                                    value="1"><label
-                                                    for="checkbox1"></label></span></td>
-                                        <td>1</td>
-                                        <td>MacBook Air M2</td>
-                                        <td>1</td>
-                                        <td>1199.99</td>
-                                        <td>10</td>
-                                        <td>Laptop siêu nhẹ, mạnh mẽ với chip M2.</td>
+                                                    id="checkbox<?php echo $index + 1; ?>" name="options[]"
+                                                    value="<?php echo $product['ProductID']; ?>"><label
+                                                    for="checkbox<?php echo $index + 1; ?>"></label></span></td>
+                                        <td><?php echo $product['ProductID']; ?></td>
+                                        <td><?php echo $product['ProductName']; ?></td>
+                                        <td><?php echo $product['CategoryID']; ?></td>
+                                        <td><?php echo $product['Price']; ?></td>
+                                        <td><?php echo $product['Stock'] ?? 'N/A'; ?></td>
+                                        <td><?php echo $product['Description']; ?></td>
                                         <td>
-                                                                                            <img src="public/img/78446_laptop_lenovo_ideapad_gami-removebg-preview.png"
-                                                alt="MacBook Air M2"
+                                            <?php if (!empty($product['ImageURL'])): ?>
+                                                <img src="public/img/<?php echo htmlspecialchars($product['ImageURL']); ?>"
+                                                alt="<?php echo $product['ProductName']; ?>"
                                                 style="max-width: 100px; height: auto;" loading="lazy">
-                                                                                    </td>
+                                            <?php else: ?>
+                                                No image
+                                            <?php endif; ?>
+                                        </td>
                                         <td>
                                             <a href="#" class="edit" data-bs-toggle="modal" data-bs-target="#editEmployeeModal"
-                                                data-id="1"
-                                                data-name="MacBook Air M2"
-                                                data-price="1199.99"
-                                                data-category="1"
-                                                data-stock="10"
-                                                data-description="Laptop siêu nhẹ, mạnh mẽ với chip M2."
-                                                data-image="78446_laptop_lenovo_ideapad_gami-removebg-preview.png"><i
+                                                data-id="<?php echo $product['ProductID']; ?>"
+                                                data-name="<?php echo $product['ProductName']; ?>"
+                                                data-price="<?php echo $product['Price']; ?>"
+                                                data-category="<?php echo $product['CategoryID']; ?>"
+                                                data-stock="<?php echo $product['Stock']; ?>"
+                                                data-description="<?php echo $product['Description']; ?>"
+                                                data-image="<?php echo $product['ImageURL']; ?>"><i
                                                     class="bi bi-pencil"></i></a>
                                             <a href="#" class="delete" data-bs-toggle="modal"
                                                 data-bs-target="#deleteEmployeeModal"
-                                                data-id="1"><i class="bi bi-trash"></i></a>
+                                                data-id="<?php echo $product['ProductID']; ?>"><i class="bi bi-trash"></i></a>
                                         </td>
                                     </tr>
-                                                                    <tr>
-                                        <td><span class="custom-checkbox"><input type="checkbox"
-                                                    id="checkbox2" name="options[]"
-                                                    value="2"><label
-                                                    for="checkbox2"></label></span></td>
-                                        <td>2</td>
-                                        <td>MacBook Pro 16</td>
-                                        <td>1</td>
-                                        <td>2499.99</td>
-                                        <td>5</td>
-                                        <td>Dành cho dân chuyên nghiệp với màn hình Retina.</td>
-                                        <td>
-                                                                                            <img src="public/img/images (9).jpg"
-                                                alt="MacBook Pro 16"
-                                                style="max-width: 100px; height: auto;" loading="lazy">
-                                                                                    </td>
-                                        <td>
-                                            <a href="#" class="edit" data-bs-toggle="modal" data-bs-target="#editEmployeeModal"
-                                                data-id="2"
-                                                data-name="MacBook Pro 16"
-                                                data-price="2499.99"
-                                                data-category="1"
-                                                data-stock="5"
-                                                data-description="Dành cho dân chuyên nghiệp với màn hình Retina."
-                                                data-image="images (9).jpg"><i
-                                                    class="bi bi-pencil"></i></a>
-                                            <a href="#" class="delete" data-bs-toggle="modal"
-                                                data-bs-target="#deleteEmployeeModal"
-                                                data-id="2"><i class="bi bi-trash"></i></a>
-                                        </td>
-                                    </tr>
-                                                                    <tr>
-                                        <td><span class="custom-checkbox"><input type="checkbox"
-                                                    id="checkbox3" name="options[]"
-                                                    value="3"><label
-                                                    for="checkbox3"></label></span></td>
-                                        <td>3</td>
-                                        <td>iPhone 14 Pro</td>
-                                        <td>2</td>
-                                        <td>1099.99</td>
-                                        <td>15</td>
-                                        <td>Smartphone cao cấp với camera Pro.</td>
-                                        <td>
-                                                                                            <img src="public/img/iphone_14_pro.jpg"
-                                                alt="iPhone 14 Pro"
-                                                style="max-width: 100px; height: auto;" loading="lazy">
-                                                                                    </td>
-                                        <td>
-                                            <a href="#" class="edit" data-bs-toggle="modal" data-bs-target="#editEmployeeModal"
-                                                data-id="3"
-                                                data-name="iPhone 14 Pro"
-                                                data-price="1099.99"
-                                                data-category="2"
-                                                data-stock="15"
-                                                data-description="Smartphone cao cấp với camera Pro."
-                                                data-image="iphone_14_pro.jpg"><i
-                                                    class="bi bi-pencil"></i></a>
-                                            <a href="#" class="delete" data-bs-toggle="modal"
-                                                data-bs-target="#deleteEmployeeModal"
-                                                data-id="3"><i class="bi bi-trash"></i></a>
-                                        </td>
-                                    </tr>
-                                                                    <tr>
-                                        <td><span class="custom-checkbox"><input type="checkbox"
-                                                    id="checkbox4" name="options[]"
-                                                    value="4"><label
-                                                    for="checkbox4"></label></span></td>
-                                        <td>4</td>
-                                        <td>iPhone SE 2022</td>
-                                        <td>2</td>
-                                        <td>429.99</td>
-                                        <td>20</td>
-                                        <td>Giá rẻ nhưng mạnh mẽ với chip A15.</td>
-                                        <td>
-                                                                                            <img src="public/img/iphone_se_2022.jpg"
-                                                alt="iPhone SE 2022"
-                                                style="max-width: 100px; height: auto;" loading="lazy">
-                                                                                    </td>
-                                        <td>
-                                            <a href="#" class="edit" data-bs-toggle="modal" data-bs-target="#editEmployeeModal"
-                                                data-id="4"
-                                                data-name="iPhone SE 2022"
-                                                data-price="429.99"
-                                                data-category="2"
-                                                data-stock="20"
-                                                data-description="Giá rẻ nhưng mạnh mẽ với chip A15."
-                                                data-image="iphone_se_2022.jpg"><i
-                                                    class="bi bi-pencil"></i></a>
-                                            <a href="#" class="delete" data-bs-toggle="modal"
-                                                data-bs-target="#deleteEmployeeModal"
-                                                data-id="4"><i class="bi bi-trash"></i></a>
-                                        </td>
-                                    </tr>
-                                                                    <tr>
-                                        <td><span class="custom-checkbox"><input type="checkbox"
-                                                    id="checkbox5" name="options[]"
-                                                    value="6"><label
-                                                    for="checkbox5"></label></span></td>
-                                        <td>6</td>
-                                        <td>AirPods Pro 2</td>
-                                        <td>3</td>
-                                        <td>249.99</td>
-                                        <td>18</td>
-                                        <td>Tai nghe chống ồn với chất lượng âm thanh tuyệt vời.</td>
-                                        <td>
-                                                                                            <img src="public/img/images (7).jpg"
-                                                alt="AirPods Pro 2"
-                                                style="max-width: 100px; height: auto;" loading="lazy">
-                                                                                    </td>
-                                        <td>
-                                            <a href="#" class="edit" data-bs-toggle="modal" data-bs-target="#editEmployeeModal"
-                                                data-id="6"
-                                                data-name="AirPods Pro 2"
-                                                data-price="249.99"
-                                                data-category="3"
-                                                data-stock="18"
-                                                data-description="Tai nghe chống ồn với chất lượng âm thanh tuyệt vời."
-                                                data-image="images (7).jpg"><i
-                                                    class="bi bi-pencil"></i></a>
-                                            <a href="#" class="delete" data-bs-toggle="modal"
-                                                data-bs-target="#deleteEmployeeModal"
-                                                data-id="6"><i class="bi bi-trash"></i></a>
-                                        </td>
-                                    </tr>
-                                                                    <tr>
-                                        <td><span class="custom-checkbox"><input type="checkbox"
-                                                    id="checkbox6" name="options[]"
-                                                    value="7"><label
-                                                    for="checkbox6"></label></span></td>
-                                        <td>7</td>
-                                        <td>iPhone 16 Plus</td>
-                                        <td>2</td>
-                                        <td>1244.00</td>
-                                        <td>100</td>
-                                        <td>HIệu năng cao</td>
-                                        <td>
-                                                                                            <img src="public/img/iphone16pm.jpg"
-                                                alt="iPhone 16 Plus"
-                                                style="max-width: 100px; height: auto;" loading="lazy">
-                                                                                    </td>
-                                        <td>
-                                            <a href="#" class="edit" data-bs-toggle="modal" data-bs-target="#editEmployeeModal"
-                                                data-id="7"
-                                                data-name="iPhone 16 Plus"
-                                                data-price="1244.00"
-                                                data-category="2"
-                                                data-stock="100"
-                                                data-description="HIệu năng cao"
-                                                data-image="iphone16pm.jpg"><i
-                                                    class="bi bi-pencil"></i></a>
-                                            <a href="#" class="delete" data-bs-toggle="modal"
-                                                data-bs-target="#deleteEmployeeModal"
-                                                data-id="7"><i class="bi bi-trash"></i></a>
-                                        </td>
-                                    </tr>
-                                                                    <tr>
-                                        <td><span class="custom-checkbox"><input type="checkbox"
-                                                    id="checkbox7" name="options[]"
-                                                    value="9"><label
-                                                    for="checkbox7"></label></span></td>
-                                        <td>9</td>
-                                        <td>AirPods Pro 4</td>
-                                        <td>3</td>
-                                        <td>1.00</td>
-                                        <td>123</td>
-                                        <td>Chống ồn tốt</td>
-                                        <td>
-                                                                                            <img src="public/img/images(10).jpg"
-                                                alt="AirPods Pro 4"
-                                                style="max-width: 100px; height: auto;" loading="lazy">
-                                                                                    </td>
-                                        <td>
-                                            <a href="#" class="edit" data-bs-toggle="modal" data-bs-target="#editEmployeeModal"
-                                                data-id="9"
-                                                data-name="AirPods Pro 4"
-                                                data-price="1.00"
-                                                data-category="3"
-                                                data-stock="123"
-                                                data-description="Chống ồn tốt"
-                                                data-image="images(10).jpg"><i
-                                                    class="bi bi-pencil"></i></a>
-                                            <a href="#" class="delete" data-bs-toggle="modal"
-                                                data-bs-target="#deleteEmployeeModal"
-                                                data-id="9"><i class="bi bi-trash"></i></a>
-                                        </td>
-                                    </tr>
-                                                                    <tr>
-                                        <td><span class="custom-checkbox"><input type="checkbox"
-                                                    id="checkbox8" name="options[]"
-                                                    value="13"><label
-                                                    for="checkbox8"></label></span></td>
-                                        <td>13</td>
-                                        <td>Ip5s</td>
-                                        <td>2</td>
-                                        <td>399.00</td>
-                                        <td>34</td>
-                                        <td>Hiệu năng cao</td>
-                                        <td>
-                                                                                            <img src="public/img/images.jpg"
-                                                alt="Ip5s"
-                                                style="max-width: 100px; height: auto;" loading="lazy">
-                                                                                    </td>
-                                        <td>
-                                            <a href="#" class="edit" data-bs-toggle="modal" data-bs-target="#editEmployeeModal"
-                                                data-id="13"
-                                                data-name="Ip5s"
-                                                data-price="399.00"
-                                                data-category="2"
-                                                data-stock="34"
-                                                data-description="Hiệu năng cao"
-                                                data-image="images.jpg"><i
-                                                    class="bi bi-pencil"></i></a>
-                                            <a href="#" class="delete" data-bs-toggle="modal"
-                                                data-bs-target="#deleteEmployeeModal"
-                                                data-id="13"><i class="bi bi-trash"></i></a>
-                                        </td>
-                                    </tr>
-                                                                                    </tbody>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="9">No products found.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
                     </table>
                     <div class="clearfix">
-                        <div class="hint-text">Showing <b>8</b> out of
-                            <b>8</b> entries
+                        <div class="hint-text">Showing <b><?php echo count($products); ?></b> out of
+                            <b><?php echo count($products); ?></b> entries
                         </div>
                         <ul class="pagination">
                             <li class="page-item"><a href="#" class="page-link">Previous</a></li>

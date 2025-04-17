@@ -155,7 +155,7 @@ $username = $isLoggedIn ? $_SESSION['currentUser']['name'] : '';
   <!-- Section danh sách sản phẩm -->
   <section class="products-list">
     <div class="container">
-      <h2 class="dssp" style="color: white">Danh Sách Sản Phẩm</h2>
+      <h2 cdus="dssp" style="color: white">Danh Sách Sản Phẩm</h2>
       <div class="products-grid">
         <?php foreach ($allProducts as $product): ?>
           <div class="product-item">
@@ -167,7 +167,7 @@ $username = $isLoggedIn ? $_SESSION['currentUser']['name'] : '';
             <div class="product-info">
               <h3 class="product-name"><?php echo htmlspecialchars($product['ProductName']); ?></h3>
               <p class="product-price">
-                <?php echo number_format($product['Price'], 0, ',', '.') . ' VNĐ'; ?>
+                <?php echo number_format($product['Price'], 0, ',', '.') . ' $'; ?>
               </p>
               <div class="product-actions">
                 <button class="add-to-cart">Thêm vào giỏ hàng</button>
