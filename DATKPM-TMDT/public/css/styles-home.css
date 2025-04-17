@@ -1,0 +1,837 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  color: #fff;
+  font-family: "Kanit", sans-serif;
+}
+
+.container {
+  padding: 1rem 6rem;
+}
+
+header {
+  position: absolute;
+  /* Thay vì fixed để header không cố định khi cuộn */
+  top: 0;
+  /* Đặt header ở đầu trang ban đầu */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 1rem 6rem;
+  /* Thêm background để rõ ràng hơn */
+  transition: transform 0.3s ease-in-out;
+  /* Hiệu ứng mượt khi ẩn/hiện */
+  z-index: 1000;
+  /* Đảm bảo header nằm trên các phần khác */
+}
+
+/* Khi cuộn xuống, ẩn header */
+header.hidden {
+  transform: translateY(-100%);
+  /* Đẩy header lên trên, ra khỏi tầm nhìn */
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 1024px) {
+  header {
+    padding: 1rem 4rem;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  header {
+    padding: 1rem;
+  }
+}
+
+header .logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+header .logo img {
+  width: 75px;
+  height: 75px;
+}
+
+header .logo a {
+  font-size: 24px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #fff;
+}
+
+header nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+header nav a {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+header nav a::after {
+  content: "";
+  display: block;
+  border-bottom: 4px solid #fff;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s linear;
+}
+
+header nav a:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+  transition: transform 0.3s linear;
+}
+
+header nav button {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  padding: 1rem 3rem;
+  background: transparent;
+  border: 2px solid #fff;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 20px;
+  overflow: hidden;
+}
+
+header nav button::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 0;
+  width: 100%;
+  background-color: #fff;
+  transition: 0.3s linear;
+  z-index: 0;
+}
+
+header nav button:hover::after {
+  height: 100%;
+  top: initial;
+  bottom: 0;
+  transition: 0.3s linear;
+}
+
+header nav button span {
+  position: relative;
+  transition: color 0.3s linear;
+  z-index: 1;
+}
+
+header nav button:hover span {
+  color: #000;
+}
+
+header .hamburger-menu {
+  display: none;
+}
+
+section {
+  min-height: 100vh;
+  background-image: url("../img/bg.png");
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+}
+
+section .container .content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 50%;
+}
+
+section .container .content h1 {
+  font-size: 48px;
+  font-weight: bold;
+}
+
+section .container .content p {
+  font-size: 20px;
+}
+
+section .container .content .action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+section .container .content .action .action-1 {
+  padding: 1rem 2rem;
+  background: transparent;
+  color: #fff;
+  border: 3px solid #fff;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 20px;
+  cursor: pointer;
+  transition: 0.2s linear;
+}
+
+section .container .content .action .action-1:hover {
+  background-color: #fff;
+  color: #000;
+  transition: 0.2s linear;
+}
+
+section .container .content .action .action-2 {
+  padding: 1rem 2rem;
+  background: transparent;
+  color: #000;
+  background-color: #fff;
+  border: 3px solid #fff;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 20px;
+  cursor: pointer;
+  transition: 0.2s linear;
+}
+
+section .container .content .action .action-2:hover {
+  background-color: #e4e4e4;
+  border: 3px solid #e4e4e4;
+  transition: 0.2s linear;
+}
+
+@media screen and (max-width: 1024px) {
+  header nav {
+    display: none;
+  }
+
+  header .hamburger-menu {
+    display: block;
+  }
+
+  section .container .content {
+    align-items: center;
+    width: 100%;
+  }
+
+  section .container .content h1,
+  section .container .content p {
+    text-align: center;
+  }
+
+  section .container .content p {
+    width: 85%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 1rem 4rem;
+  }
+
+  header {
+    padding: 1rem 4rem;
+  }
+
+  section .container .content p {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  header {
+    padding: 1rem;
+  }
+
+  .container {
+    padding: 1rem;
+  }
+}
+
+
+/*Image*/
+.container {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.content {
+  flex: 1;
+}
+
+.card-stack {
+  flex: 1;
+  position: relative;
+  height: 360px;
+  display: flex;
+  justify-content: center;
+  perspective: 1000px;
+}
+
+.card {
+  position: absolute;
+  width: 280px;
+  height: 340px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card.left {
+  transform: translateX(-80px) scale(0.85);
+  opacity: 0.7;
+  z-index: 1;
+}
+
+.card.center {
+  transform: translateX(0) scale(1);
+  z-index: 3;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.card.right {
+  transform: translateX(80px) scale(0.85);
+  opacity: 0.7;
+  z-index: 1;
+}
+
+/* Shake animation for side cards */
+@keyframes gentle-shake {
+  0% {
+    transform: translateX(-80px) scale(0.85);
+  }
+
+  25% {
+    transform: translateX(-82px) scale(0.85);
+  }
+
+  50% {
+    transform: translateX(-80px) scale(0.85);
+  }
+
+  75% {
+    transform: translateX(-78px) scale(0.85);
+  }
+
+  100% {
+    transform: translateX(-80px) scale(0.85);
+  }
+}
+
+@keyframes gentle-shake-right {
+  0% {
+    transform: translateX(80px) scale(0.85);
+  }
+
+  25% {
+    transform: translateX(82px) scale(0.85);
+  }
+
+  50% {
+    transform: translateX(80px) scale(0.85);
+  }
+
+  75% {
+    transform: translateX(78px) scale(0.85);
+  }
+
+  100% {
+    transform: translateX(80px) scale(0.85);
+  }
+}
+
+.card.left:hover {
+  animation: gentle-shake 0.5s ease-in-out;
+}
+
+.card.right:hover {
+  animation: gentle-shake-right 0.5s ease-in-out;
+}
+
+.card .title {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  color: white;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 60%);
+  z-index: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .card-stack {
+    width: 100%;
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+}
+
+@media (max-width: 580px) {
+  .card {
+    width: 240px;
+    height: 300px;
+  }
+
+  .card.left {
+    transform: translateX(-30px) scale(0.85);
+  }
+
+  .card.right {
+    transform: translateX(30px) scale(0.85);
+  }
+
+  @keyframes gentle-shake {
+    0% {
+      transform: translateX(-30px) scale(0.85);
+    }
+
+    25% {
+      transform: translateX(-32px) scale(0.85);
+    }
+
+    50% {
+      transform: translateX(-30px) scale(0.85);
+    }
+
+    75% {
+      transform: translateX(-28px) scale(0.85);
+    }
+
+    100% {
+      transform: translateX(-30px) scale(0.85);
+    }
+  }
+
+  @keyframes gentle-shake-right {
+    0% {
+      transform: translateX(30px) scale(0.85);
+    }
+
+    25% {
+      transform: translateX(32px) scale(0.85);
+    }
+
+    50% {
+      transform: translateX(30px) scale(0.85);
+    }
+
+    75% {
+      transform: translateX(28px) scale(0.85);
+    }
+
+    100% {
+      transform: translateX(30px) scale(0.85);
+    }
+  }
+}
+
+/* Style cho dropdown */
+.nav-item {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown menu mở rộng */
+.dropdown-menu {
+  display: none;
+  position: fixed;
+  top: 80px;
+  /* Điều chỉnh theo header */
+  left: 25%;
+  /* Để menu chiếm giữa */
+  width: 50vw;
+  /* Chiếm 50% màn hình */
+  background: white;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  z-index: 1000;
+  padding: 20px;
+  text-align: center;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 15px;
+  text-decoration: none;
+  color: black;
+  font-size: 18px;
+}
+
+.dropdown-menu a:hover {
+  background: #f0f0f0;
+}
+
+/* Hiển thị menu khi active */
+.dropdown-menu.active {
+  display: block;
+}
+
+.search-icon {
+  display: inline-block;
+  margin-left: 15px;
+  vertical-align: middle;
+}
+
+.search-icon svg {
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.search-icon:hover svg {
+  transform: scale(1.1);
+}
+
+/* Container chính của tìm kiếm */
+.search-container {
+  position: relative;
+  display: inline-block;
+  margin-left: 15px;
+}
+
+/* Ô nhập tìm kiếm */
+.search-box {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.search-icon-input {
+  margin-right: 8px;
+}
+
+/* Input tìm kiếm */
+#search-input {
+  border: none;
+  outline: none;
+  font-size: 14px;
+  width: 200px;
+}
+
+/* Dropdown tìm kiếm */
+.dropdown-search {
+  display: none;
+  position: absolute;
+  top: 40px;
+  left: 0;
+  width: 100%;
+  background: white;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  padding: 10px;
+  z-index: 1000;
+}
+
+/* Hiển thị dropdown */
+.dropdown-search.active {
+  display: block;
+}
+
+/* người dùng */
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  color: #000;
+  /* Hoặc màu phù hợp với thiết kế của bạn */
+}
+
+.user-profile i {
+  font-size: 18px;
+}
+
+/* user */
+.hidden {
+  display: none !important;
+}
+
+#user-info {
+  position: relative;
+  cursor: pointer;
+}
+
+/* Đảm bảo dropdown hiển thị trên các phần khác */
+/* Định dạng dropdown */
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  /* Hiển thị ngay dưới user-info */
+  left: 50%;
+  /* Căn giữa theo chiều ngang */
+  transform: translateX(-50%);
+  /* Dịch ngược lại 50% chiều rộng */
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  /* Đảm bảo dropdown không bị che */
+  min-width: 150px;
+  text-align: center;
+}
+
+/* Định dạng màu chữ */
+.user-dropdown a,
+.user-dropdown span {
+  display: block;
+  color: black;
+  /* Màu chữ đen */
+  text-decoration: none;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+/* Hiệu ứng hover */
+.user-dropdown a:hover,
+.user-dropdown span:hover {
+  background-color: #f0f0f0;
+}
+
+/* Đảm bảo dropdown hiển thị khi hover */
+.user-dropdown {
+  display: none;
+}
+
+#user-info {
+  position: relative;
+  /* Để dropdown có thể căn theo user-info */
+  cursor: pointer;
+}
+
+#user-info:hover .user-dropdown {
+  display: block;
+}
+
+/* Dropdown tìm kiếm */
+.dropdown-search {
+  display: none;
+  position: absolute;
+  top: 40px;
+  left: 0;
+  width: 100%;
+  background: white;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  padding: 10px;
+  z-index: 1000;
+}
+
+/* Hiển thị dropdown */
+.dropdown-search.active {
+  display: block;
+}
+
+/* Định dạng các liên kết trong dropdown */
+.dropdown-search a {
+  display: block;
+  padding: 5px 10px;
+  text-decoration: none;
+  color: #000000;
+  /* Chữ màu đen */
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Hiệu ứng hover */
+.dropdown-search a:hover {
+  background: #f0f0f0;
+  color: #000000;
+}
+
+/* Thông báo trong dropdown */
+.dropdown-search p {
+  padding: 5px 10px;
+  margin: 0;
+  color: #666;
+  /* Màu xám cho thông báo */
+  font-size: 14px;
+}
+
+/* Products List Section */
+.products-list {
+  padding: 40px 0;
+  background-color: #f5f5f5;
+}
+
+.products-list .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Căn giữa nội dung trong container */
+}
+
+.products-list h2 {
+  text-align: center; /* Căn giữa chữ */
+  margin-bottom: 30px;
+  font-size: 2.5rem; /* Tăng kích thước chữ cho nổi bật */
+  color: #333;
+  font-family: 'Kanit', sans-serif;
+  font-weight: 700; /* Đậm hơn */
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  width: 100%; /* Đảm bảo lưới chiếm toàn bộ chiều rộng container */
+  padding: 0 20px;
+}
+
+.product-item {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.product-item:hover {
+  transform: translateY(-5px);
+}
+
+.product-image {
+  width: 100%;
+  background-color: #e0e0e0; /* Màu nền placeholder khi không có ảnh */
+  position: relative;
+}
+
+.product-image img {
+  width: 100%; /* Chiều rộng tối đa bằng container */
+  height: auto; /* Chiều cao tự điều chỉnh theo tỷ lệ ảnh */
+  display: block; /* Loại bỏ khoảng trống dưới ảnh */
+  object-fit: contain; /* Giữ nguyên tỷ lệ ảnh, không cắt */
+}
+
+.product-info {
+  padding: 15px;
+}
+
+.product-name {
+  font-size: 1.2rem;
+  margin: 0 0 10px;
+  color: #333;
+  font-family: 'Roboto', sans-serif;
+}
+
+.product-price {
+  font-size: 1.1rem;
+  color: #e91e63;
+  margin: 0 0 15px;
+  font-weight: 500;
+}
+
+.product-actions {
+  display: flex;
+  gap: 10px; /* Khoảng cách giữa hai nút */
+}
+
+.add-to-cart {
+  flex: 1; /* Chiếm đều không gian */
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+  transition: background-color 0.3s ease;
+}
+
+.add-to-cart:hover {
+  background-color: #0056b3;
+}
+
+.buy-now {
+  flex: 1; /* Chiếm đều không gian */
+  padding: 10px;
+  background-color: #ff5722; /* Màu cam nổi bật cho nút Mua ngay */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+  transition: background-color 0.3s ease;
+}
+
+.buy-now:hover {
+  background-color: #e64a19; /* Màu cam đậm hơn khi hover */
+}
+
+.no-products {
+  text-align: center;
+  color: #666;
+  font-size: 1.2rem;
+  padding: 20px;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .products-grid {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  .products-list h2 {
+      font-size: 2rem;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .products-grid {
+      grid-template-columns: 1fr;
+  }
+
+  .products-list h2 {
+      font-size: 1.5rem;
+  }
+
+  .product-actions {
+      flex-direction: column; /* Xếp dọc hai nút trên màn hình nhỏ */
+      gap: 5px;
+  }
+}
