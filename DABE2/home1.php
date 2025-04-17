@@ -167,7 +167,7 @@ $username = $isLoggedIn ? $_SESSION['currentUser']['name'] : '';
             <div class="product-info">
               <h3 class="product-name"><?php echo htmlspecialchars($product['ProductName']); ?></h3>
               <p class="product-price">
-                <?php echo number_format($product['Price'], 0, ',', '.') . ' VNĐ'; ?>
+                <?php echo number_format($product['Price'], 0, ',', '.') . ' $'; ?>
               </p>
               <div class="product-actions">
                 <button class="add-to-cart">Thêm vào giỏ hàng</button>
