@@ -21,11 +21,14 @@ if (isset($_GET['search'])) {
   exit();
 }
 
-// Lấy 3 sản phẩm mới nhất
+// Lấy 3 sản phẩm mới nhất cho card-stack
 $latestProducts = $productsDB->getLatestProducts(3); // Giới hạn 3 sản phẩm
 
-$categoriesFromDB = [];
+// Lấy tất cả sản phẩm cho danh sách sản phẩm
 $allProducts = $productsDB->getAllProducts();
+
+// Tạo danh sách danh mục cho dropdown
+$categoriesFromDB = [];
 foreach ($allProducts as $product) {
   $categoryID = $product['CategoryID'];
   $sql = $productsDB->getConnection()->prepare("SELECT CategoryName FROM Categories WHERE CategoryID = ?");
@@ -36,6 +39,27 @@ foreach ($allProducts as $product) {
 
   $categoriesFromDB[$normalizedCategoryName] = $categoriesFromDB[$normalizedCategoryName] ?? [];
   $categoriesFromDB[$normalizedCategoryName][] = $product['ProductName'];
+}
+
+// Lấy danh sách sản phẩm kèm thông tin giảm giá (nếu có)
+$currentDate = date('Y-m-d H:i:s');
+$productList = [];
+foreach ($allProducts as $product) {
+  $productID = $product['ProductID'];
+  $sql = $productsDB->getConnection()->prepare(
+    "SELECT DiscountPercentage 
+         FROM ProductDiscounts 
+         WHERE ProductID = ? AND StartDate <= ? AND EndDate >= ?"
+  );
+  $sql->bind_param("iss", $productID, $currentDate, $currentDate);
+  $sql->execute();
+  $discountResult = $sql->get_result()->fetch_assoc();
+
+  $product['DiscountPercentage'] = $discountResult ? $discountResult['DiscountPercentage'] : null;
+  $product['CurrentPrice'] = $discountResult
+    ? $product['Price'] * (1 - $discountResult['DiscountPercentage'] / 100)
+    : $product['Price'];
+  $productList[] = $product;
 }
 
 // Kiểm tra trạng thái đăng nhập
@@ -64,7 +88,6 @@ $username = $isLoggedIn ? $_SESSION['currentUser']['name'] : '';
   </div>
 
   <header class="header" style="border-bottom: 50px solid white; background: rgb(235, 235, 235);">
-    <!-- Phần còn lại của header giữ nguyên -->
     <div class="logo">
       <img src="public/img/logo.png" alt="logo" />
       <a href="">TPV E-COMMERCE</a>
@@ -84,6 +107,11 @@ $username = $isLoggedIn ? $_SESSION['currentUser']['name'] : '';
       </div>
     </div>
     <nav>
+      <div class="close-menu">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 6L18 18M18 6L6 18" stroke="#000000" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
       <a href="#">Home</a>
       <a href="#">Mac</a>
       <a href="#">Iphone</a>
@@ -108,42 +136,48 @@ $username = $isLoggedIn ? $_SESSION['currentUser']['name'] : '';
         <div id="user-info">
           <span id="username"><?php echo htmlspecialchars($username); ?></span>
           <div class="user-dropdown">
-            <a href="user-profile.html">Thông tin cá nhân</a>
+            <a href="user-profile.html">Thông tin</a>
             <a href="?logout=true" class="logout-text">Đăng xuất</a>
           </div>
         </div>
       <?php endif; ?>
     </nav>
     <div class="hamburger-menu">
-      <svg width="35px" height="35px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M4 18L20 18" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
-        <path d="M4 12L20 12" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
-        <path d="M4 6L20 6" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 18L20 18" stroke="#000000" stroke-width="2" stroke-linecap="round" />
+        <path d="M4 12L20 12" stroke="#000000" stroke-width="2" stroke-linecap="round" />
+        <path d="M4 6L20 6" stroke="#000000" stroke-width="2" stroke-linecap="round" />
       </svg>
     </div>
   </header>
 
   <section>
-    <div class="container" style="padding-top: 100px;">
-      <div class="content" style="margin-left: -160px; width: 900px;">
-        <img src="public/img/banner1.avif" alt="banner" style="border-radius: 5px; height: 400px;">
+    <div class="container row-layout">
+      <div class="content">
+        <img src="public/img/banner1.avif" alt="banner" loading="lazy">
       </div>
-      <div class="card-stack" style="margin-left: 300px;">
+      <div class="card-stack">
         <?php if (count($latestProducts) >= 3): ?>
           <div class="card left" data-position="left">
-            <img src="public/img/<?php echo htmlspecialchars($latestProducts[0]['ImageURL']); ?>"
-              alt="<?php echo htmlspecialchars($latestProducts[0]['ProductName']); ?>">
-            <div class="title"><?php echo htmlspecialchars($latestProducts[0]['ProductName']); ?></div>
+            <a href="ctsp.php?id=<?php echo $latestProducts[0]['ProductID']; ?>">
+              <img src="public/img/<?php echo htmlspecialchars($latestProducts[0]['ImageURL']); ?>"
+                alt="<?php echo htmlspecialchars($latestProducts[0]['ProductName']); ?>" loading="lazy">
+              <div class="title"><?php echo htmlspecialchars($latestProducts[0]['ProductName']); ?></div>
+            </a>
           </div>
           <div class="card center" data-position="center">
-            <img src="public/img/<?php echo htmlspecialchars($latestProducts[1]['ImageURL']); ?>"
-              alt="<?php echo htmlspecialchars($latestProducts[1]['ProductName']); ?>">
-            <div class="title"><?php echo htmlspecialchars($latestProducts[1]['ProductName']); ?></div>
+            <a href="ctsp.php?id=<?php echo $latestProducts[1]['ProductID']; ?>">
+              <img src="public/img/<?php echo htmlspecialchars($latestProducts[1]['ImageURL']); ?>"
+                alt="<?php echo htmlspecialchars($latestProducts[1]['ProductName']); ?>" loading="lazy">
+              <div class="title"><?php echo htmlspecialchars($latestProducts[1]['ProductName']); ?></div>
+            </a>
           </div>
           <div class="card right" data-position="right">
-            <img src="public/img/<?php echo htmlspecialchars($latestProducts[2]['ImageURL']); ?>"
-              alt="<?php echo htmlspecialchars($latestProducts[2]['ProductName']); ?>">
-            <div class="title"><?php echo htmlspecialchars($latestProducts[2]['ProductName']); ?></div>
+            <a href="ctsp.php?id=<?php echo $latestProducts[2]['ProductID']; ?>">
+              <img src="public/img/<?php echo htmlspecialchars($latestProducts[2]['ImageURL']); ?>"
+                alt="<?php echo htmlspecialchars($latestProducts[2]['ProductName']); ?>" loading="lazy">
+              <div class="title"><?php echo htmlspecialchars($latestProducts[2]['ProductName']); ?></div>
+            </a>
           </div>
         <?php else: ?>
           <p>No products available to display.</p>
@@ -153,35 +187,118 @@ $username = $isLoggedIn ? $_SESSION['currentUser']['name'] : '';
   </section>
 
   <!-- Section danh sách sản phẩm -->
-  <section class="products-list">
-    <div class="container">
-      <h2 cdus="dssp" style="color: white">Danh Sách Sản Phẩm</h2>
-      <div class="products-grid">
-        <?php foreach ($allProducts as $product): ?>
-          <div class="product-item">
+  <div class="promo-container">
+    <div class="promo-title">
+      <span class="icon">⭐</span>
+      <span class="icon">⚡</span>
+      DANH SÁCH SẢN PHẨM
+      <span class="icon">🔥</span>
+    </div>
+
+    <div class="navigation-buttons">
+      <button class="nav-button prev">←</button>
+      <button class="nav-button next">→</button>
+    </div>
+
+    <div class="products-slider">
+      <?php if (!empty($productList)): ?>
+        <?php foreach ($productList as $product): ?>
+          <div class="product-card">
             <div class="product-image">
-              <img
-                src="<?php echo !empty($product['ImageURL']) ? 'public/img/' . htmlspecialchars($product['ImageURL']) : 'public/img/placeholder.jpg'; ?>"
-                alt="<?php echo htmlspecialchars($product['ProductName']); ?>">
+              <a href="ctsp.php?id=<?php echo $product['ProductID']; ?>">
+                <img src="public/img/<?php echo htmlspecialchars($product['ImageURL']); ?>"
+                  alt="<?php echo htmlspecialchars($product['ProductName']); ?>" loading="lazy">
+              </a>
             </div>
-            <div class="product-info">
-              <h3 class="product-name"><?php echo htmlspecialchars($product['ProductName']); ?></h3>
-              <p class="product-price">
-                <?php echo number_format($product['Price'], 0, ',', '.') . ' $'; ?>
-              </p>
-              <div class="product-actions">
-                <button class="add-to-cart">Thêm vào giỏ hàng</button>
-                <button class="buy-now">Mua ngay</button>
+            <div class="product-details">
+              <div class="product-title">
+                <a href="ctsp.php?id=<?php echo $product['ProductID']; ?>">
+                  <?php echo htmlspecialchars($product['ProductName']); ?>
+                </a>
               </div>
+              <div class="price-container">
+                <span class="current-price"><?php echo number_format($product['CurrentPrice'], 0); ?>₫</span>
+                <?php if ($product['DiscountPercentage']): ?>
+                  <div>
+                    <span class="original-price"><?php echo number_format($product['Price'], 0); ?>₫</span>
+                    <span class="discount-badge">-<?php echo number_format($product['DiscountPercentage'], 0); ?>%</span>
+                  </div>
+                <?php endif; ?>
+              </div>
+              <button class="add-to-cart" data-product-id="<?php echo $product['ProductID']; ?>">
+                <span class="cart-icon">+</span>
+                THÊM VÀO GIỎ
+              </button>
             </div>
           </div>
         <?php endforeach; ?>
-        <?php if (empty($allProducts)): ?>
-          <p class="no-products">Hiện tại không có sản phẩm nào để hiển thị.</p>
-        <?php endif; ?>
+      <?php else: ?>
+        <p>Không có sản phẩm nào để hiển thị.</p>
+      <?php endif; ?>
+    </div>
+
+    <div class="view-all">
+      <button class="view-all-button">
+        <span>✦</span> DANH SÁCH SẢN PHẨM <span>🔥</span>
+      </button>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-row">
+        <div class="footer-column">
+          <h3>Về TÔM</h3>
+          <p>Trang thương mại chính thức của TÔM E-COMMERCE. Luôn tìm kiếm những sản phẩm vì mọi người.</p>
+          <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-google-plus-g"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+
+        <div class="footer-column">
+          <h3>Thông tin liên hệ</h3>
+          <div class="contact-info">
+            <p><i class="fas fa-map-marker-alt"></i> CS1: Đồng khởi - Quận 1</p>
+            <p><i class="fas fa-phone"></i> 0246638136</p>
+            <p><i class="fas fa-envelope"></i> bthvuong23@gmail.com</p>
+          </div>
+        </div>
+
+        <div class="footer-column">
+          <h3>Tài Khoản Ngân Hàng</h3>
+          <ul>
+            <li><a href="#">Tài Khoản Ngân Hàng</a></li>
+            <li><a href="#">Tìm kiếm</a></li>
+            <li><a href="#">Phương thức thanh toán</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h3>Chính sách</h3>
+          <ul>
+            <li><a href="#">Chính Sách Bảo Mật</a></li>
+            <li><a href="#">Qui Định Bảo Hành</a></li>
+            <li><a href="#">Chính Sách Đổi Trả</a></li>
+            <li><a href="#">Điều khoản sử dụng</a></li>
+            <li><a href="#">Chính sách vận chuyển & kiểm hàng</a></li>
+          </ul>
+        </div>
       </div>
     </div>
-  </section>
+  </footer>
+
+  <footer>
+    <div class="footer-bottom" style="padding: 10px;">
+      <p>Copyright © 2025 Bản quyền của Công ty cổ phần TÔM E-COMMERCE Việt Nam - Trụ sở: Hồ Chí Minh</p>
+    </div>
+  </footer>
+
+  <!-- Font Awesome for icons -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
 
   <script>
     const categoriesFromDB = <?php echo json_encode($categoriesFromDB); ?>;
@@ -220,7 +337,7 @@ $username = $isLoggedIn ? $_SESSION['currentUser']['name'] : '';
             return response.json();
           })
           .then(searchResults => {
-            console.log('Search Results:', searchResults); // Kiểm tra dữ liệu trả về
+            console.log('Search Results:', searchResults);
             dropdownSearch.innerHTML = '';
             if (searchResults.length > 0) {
               searchResults.forEach(product => {
@@ -255,6 +372,52 @@ $username = $isLoggedIn ? $_SESSION['currentUser']['name'] : '';
     document.addEventListener('click', e => {
       if (!e.target.closest('.search-container')) {
         dropdownSearch.classList.remove('active');
+      }
+    });
+
+    // Slider navigation
+    document.addEventListener('DOMContentLoaded', function () {
+      const slider = document.querySelector('.products-slider');
+      const prevBtn = document.querySelector('.nav-button.prev');
+      const nextBtn = document.querySelector('.nav-button.next');
+      const cardWidth = 295; // Card width + gap
+
+      prevBtn.addEventListener('click', () => {
+        slider.scrollLeft -= cardWidth;
+      });
+
+      nextBtn.addEventListener('click', () => {
+        slider.scrollLeft += cardWidth;
+      });
+
+      // Card-stack rotation
+      const cards = document.querySelectorAll('.card-stack .card');
+      let currentIndex = 0;
+
+      function rotateCards() {
+        cards.forEach((card, index) => {
+          const newIndex = (index + currentIndex) % cards.length;
+          card.classList.remove('left', 'center', 'right');
+          if (newIndex === 0) {
+            card.classList.add('center');
+          } else if (newIndex === 1) {
+            card.classList.add('right');
+          } else {
+            card.classList.add('left');
+          }
+        });
+        currentIndex = (currentIndex + 1) % cards.length;
+      }
+
+      if (cards.length >= 3) {
+        rotateCards();
+        let intervalId = setInterval(rotateCards, 5000);
+
+        const cardStack = document.querySelector('.card-stack');
+        cardStack.addEventListener('mouseenter', () => clearInterval(intervalId));
+        cardStack.addEventListener('mouseleave', () => {
+          intervalId = setInterval(rotateCards, 5000);
+        });
       }
     });
   </script>
