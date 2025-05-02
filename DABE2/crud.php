@@ -1,4 +1,28 @@
 
+<<<<<<< Updated upstream
+=======
+// Xử lý đăng xuất
+if (isset($_GET['logout'])) {
+    session_unset();
+    session_destroy();
+    header("Location: lg&rgt.php");
+    exit();
+}
+
+// Kiểm tra quyền truy cập
+if (!isset($_SESSION['currentUser']) || $_SESSION['currentUser']['userType'] !== 'Admin' || $_SESSION['currentUser']['email'] !== 'admin') {
+    header("Location: lg&rgt.php");
+    exit();
+}
+
+require_once 'Product_Database.php';
+$productDB = new Product_Database();
+
+
+// Lấy tất cả sản phẩm
+$products = $productDB->getAllProducts();
+?>
+>>>>>>> Stashed changes
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,10 +30,371 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<<<<<<< Updated upstream
     <title>Shop Item - Start Bootstrap Template</title>
+=======
+    <title>TPV E-Commerce Admin</title>
+>>>>>>> Stashed changes
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
     <link href="public/css/styles1.css" rel="stylesheet" />
+<<<<<<< Updated upstream
+=======
+    <!-- Custom CSS for crud.php -->
+    <style>
+        :root {
+            --primary-color: #3b7ddd;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            background: linear-gradient(to right, #3b7ddd, #4e92e3);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: white !important;
+            font-size: 1.5rem;
+        }
+
+        .navbar-light .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        .navbar-light .navbar-nav .nav-link:hover {
+            color: white !important;
+        }
+
+        .btn-outline-dark {
+            color: white;
+            border-color: white;
+        }
+
+        .btn-outline-dark:hover {
+            background-color: white;
+            color: var(--primary-color);
+        }
+
+        .btn-outline-danger {
+            color: white;
+            border-color: white;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: white;
+            color: var(--danger-color);
+        }
+
+        .card {
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border: none;
+        }
+
+        .dashboard-header {
+            padding: 1.5rem 0;
+            background-color: white;
+            border-bottom: 1px solid #e9ecef;
+            margin-bottom: 2rem;
+        }
+
+        .table-wrapper {
+            background: white;
+            padding: 20px;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            margin-bottom: 2rem;
+        }
+
+        .table-title {
+            padding-bottom: 15px;
+            background: white;
+            color: #333;
+            border-radius: 3px 3px 0 0;
+        }
+
+        .table-title h2 {
+            margin: 5px 0 0;
+            font-size: 24px;
+        }
+
+        .table-title .btn {
+            float: right;
+            font-size: 13px;
+            border-radius: 2px;
+            border: none;
+            min-width: 50px;
+            margin-left: 10px;
+        }
+
+        .table {
+            border-radius: 3px;
+        }
+
+        table.table tr th,
+        table.table tr td {
+            border-color: #e9e9e9;
+            padding: 12px 15px;
+            vertical-align: middle;
+        }
+
+        table.table-striped tbody tr:nth-of-type(odd) {
+            background-color: #fcfcfc;
+        }
+
+        table.table-hover tbody tr:hover {
+            background: #f5f5f5;
+        }
+
+        table.table th i {
+            font-size: 13px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+
+        table.table td:last-child {
+            width: 130px;
+        }
+
+        table.table td a {
+            display: inline-block;
+            margin: 0 5px;
+            min-width: 24px;
+        }
+
+        table.table td a.edit {
+            color: #FFC107;
+        }
+
+        table.table td a.delete {
+            color: #E34724;
+        }
+
+        .pagination {
+            float: right;
+            margin: 0 0 5px;
+        }
+
+        .hint-text {
+            float: left;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        .product-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            transition: transform 0.2s;
+        }
+
+        .product-image:hover {
+            transform: scale(3);
+            z-index: 1000;
+        }
+
+        .btn-add {
+            background-color: var(--success-color);
+            color: white;
+            border-radius: 50px;
+            padding: 8px 16px;
+        }
+
+        .btn-add:hover {
+            background-color: #218838;
+            color: white;
+        }
+
+        .btn-action {
+            font-size: 18px;
+            padding: 5px;
+            margin: 2px;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .btn-edit {
+            color: var(--warning-color);
+        }
+
+        .btn-edit:hover {
+            color: #e0a800;
+        }
+
+        .btn-delete {
+            color: var(--danger-color);
+        }
+
+        .btn-delete:hover {
+            color: #c82333;
+        }
+
+        .modal-header {
+            background: var(--primary-color);
+            color: white;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .modal-header .close {
+            color: white;
+        }
+
+        .modal-body {
+            padding: 20px 25px;
+        }
+
+        .modal-footer {
+            background: #ecf0f1;
+            border-radius: 0 0 5px 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            border-radius: 4px;
+            box-shadow: none;
+            border-color: #dddddd;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(59, 125, 221, 0.1);
+        }
+
+        .alert {
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        footer {
+            background: linear-gradient(to right, #343a40, #4e555b);
+            color: white;
+        }
+
+        /* Custom checkbox */
+        .custom-checkbox {
+            position: relative;
+            display: inline-block;
+        }
+
+        .custom-checkbox input[type="checkbox"] {
+            opacity: 0;
+            position: absolute;
+            cursor: pointer;
+        }
+
+        .custom-checkbox label {
+            position: relative;
+            cursor: pointer;
+            padding-left: 25px;
+            margin-bottom: 0;
+        }
+
+        .custom-checkbox label:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 18px;
+            height: 18px;
+            border: 1px solid #ddd;
+            background: #fff;
+            border-radius: 3px;
+        }
+
+        .custom-checkbox input[type="checkbox"]:checked+label:after {
+            content: '\2713';
+            position: absolute;
+            top: -1px;
+            left: 3px;
+            font-size: 14px;
+            color: var(--primary-color);
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: white;
+            transition: transform 0.3s;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stats-card-products {
+            background-image: linear-gradient(135deg, #3B7DDD 0%, #2d62b2 100%);
+        }
+
+        .stats-card-categories {
+            background-image: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+        }
+
+        .stats-card-stock {
+            background-image: linear-gradient(135deg, #ffc107 0%, #d39e00 100%);
+        }
+
+        .stats-card-value {
+            background-image: linear-gradient(135deg, #dc3545 0%, #bd2130 100%);
+        }
+
+        .stats-icon {
+            font-size: 48px;
+            opacity: 0.6;
+        }
+
+        .stats-number {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .stats-title {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        /* Responsive table */
+        @media (max-width: 768px) {
+
+            .table-responsive-stack td,
+            .table-responsive-stack th {
+                display: block;
+                text-align: center;
+                width: 100%;
+            }
+
+            .table-responsive-stack tr {
+                display: block;
+                margin-bottom: 20px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+
+            .table-responsive-stack th {
+                background-color: #f8f9fa;
+                border-bottom: 1px solid #ddd;
+            }
+        }
+    </style>
+>>>>>>> Stashed changes
 </head>
 
 <body>
@@ -22,7 +407,22 @@
                 aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+<<<<<<< Updated upstream
                     <li class="nav-item"><a class="nav-link active" aria-current="page" href="home1.php">Home</a></li>
+=======
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="home1.php">
+                        <i class="bi bi-house-door me-1"></i>Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="product_crud.php">
+                            <i class="bi bi-grid me-1"></i>Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="category_crud.php">
+                            <i class="bi bi-grid me-1"></i>Categories</a>
+                    </li>
+>>>>>>> Stashed changes
                 </ul>
                 <div class="d-flex">
                     <form class="me-3">
@@ -38,6 +438,7 @@
         </div>
     </nav>
 
+<<<<<<< Updated upstream
     <!-- Product section-->
     <section class="py-5">
         <div class="container px-4 px-lg-5 my-5">
@@ -329,12 +730,106 @@
                             <li class="page-item active"><a href="#" class="page-link">1</a></li>
                             <li class="page-item"><a href="#" class="page-link">Next</a></li>
                         </ul>
+=======
+    <!-- Dashboard header -->
+    <div class="dashboard-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h1 class="fw-bold">Product Management</h1>
+                    <p class="text-muted">Manage your store's product inventory</p>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Stats -->
+    <section class="py-2">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card stats-card-products">
+                        <div class="row">
+                            <div class="col-4">
+                                <i class="bi bi-box-seam stats-icon"></i>
+                            </div>
+                            <div class="col-8 text-end">
+                                <div class="stats-number"><?php echo count($products); ?></div>
+                                <div class="stats-title">Total Products</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card stats-card-categories">
+                        <div class="row">
+                            <div class="col-4">
+                                <i class="bi bi-tag stats-icon"></i>
+                            </div>
+                            <div class="col-8 text-end">
+                                <div class="stats-number">
+                                    <?php
+                                    $categories = array_unique(array_column($products, 'CategoryID'));
+                                    echo count($categories);
+                                    ?>
+                                </div>
+                                <div class="stats-title">Categories</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card stats-card-stock">
+                        <div class="row">
+                            <div class="col-4">
+                                <i class="bi bi-archive stats-icon"></i>
+                            </div>
+                            <div class="col-8 text-end">
+                                <div class="stats-number">
+                                    <?php
+                                    $totalStock = 0;
+                                    foreach ($products as $product) {
+                                        $totalStock += $product['Stock'] ?? 0;
+                                    }
+                                    echo $totalStock;
+                                    ?>
+                                </div>
+                                <div class="stats-title">Items in Stock</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card stats-card-value">
+                        <div class="row">
+                            <div class="col-4">
+                                <i class="bi bi-currency-dollar stats-icon"></i>
+                            </div>
+                            <div class="col-8 text-end">
+                                <div class="stats-number">
+                                    <?php
+                                    $totalValue = 0;
+                                    foreach ($products as $product) {
+                                        $totalValue += ($product['Price'] * ($product['Stock'] ?? 0));
+                                    }
+                                    echo number_format($totalValue, 2);
+                                    ?>
+                                </div>
+                                <div class="stats-title">Inventory Value</div>
+                            </div>
+                        </div>
+>>>>>>> Stashed changes
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+<<<<<<< Updated upstream
     <!-- Add Modal -->
     <div id="addEmployeeModal" class="modal fade">
         <div class="modal-dialog">
@@ -448,6 +943,9 @@
             </div>
         </div>
     </div>
+=======
+    <div id="dynamic-content"></div>
+>>>>>>> Stashed changes
 
     <!-- Footer-->
     <footer class="py-5 bg-dark">
@@ -457,6 +955,7 @@
     </footer>
 
     <!-- Bootstrap core JS-->
+<<<<<<< Updated upstream
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS-->
     <script src="js/scripts.js"></script>
@@ -488,6 +987,32 @@
             button.addEventListener('click', function () {
                 const id = this.getAttribute('data-id');
                 document.getElementById('delete_product_id').value = id;
+=======
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const categoryLink = document.querySelector('a[href="category_crud.php"]');
+            const contentContainer = document.createElement('div');
+            contentContainer.id = 'dynamic-content';
+            document.querySelector('section.py-2').insertAdjacentElement('afterend', contentContainer);
+
+            categoryLink.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                fetch('category_crud.php')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(html => {
+                        contentContainer.innerHTML = html;
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                    });
+>>>>>>> Stashed changes
             });
         });
     </script>

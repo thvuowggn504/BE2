@@ -1,6 +1,6 @@
 <?php
 session_start(); // Bắt đầu session để quản lý người dùng đăng nhập
-require_once 'database.php'; // File kết nối database
+require_once './includes/database.php'; // File kết nối database
 
 // Khởi tạo các biến thông báo
 $register_error = null;
@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
                 'phone' => null,
                 'userType' => "Admin"
             ];
-            header("Location: crud.php");
+            header("Location: ./admin/admin-dashboard.php");
             exit();
         }
 
@@ -90,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login'])) {
                     'userType' => $user['UserType']
                 ];
                 if ($user['UserType'] === 'Admin') {
-                    header("Location: crud.php");
+                    header("Location: ./admin/admin-dashboard.php");
                 } else {
                     header("Location: home1.php");
                 }

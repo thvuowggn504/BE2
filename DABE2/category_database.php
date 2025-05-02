@@ -7,7 +7,8 @@ class Category_Database extends Database
     // Lấy tất cả danh mục
     public function getAllCategories()
     {
-        $sql = self::$connection->prepare("SELECT * FROM categories");
+        $connection = Database::getConnection();
+        $sql = $connection->prepare("SELECT * FROM categories");
         $sql->execute();
         return $sql->get_result()->fetch_all(MYSQLI_ASSOC);
     }
@@ -15,7 +16,8 @@ class Category_Database extends Database
     // Lấy danh mục theo ID
     public function getCategoryById($id)
     {
-        $sql = self::$connection->prepare("SELECT * FROM categories WHERE id = ?");
+        $connection = Database::getConnection();
+        $sql = $connection->prepare("SELECT * FROM categories WHERE id = ?");
         $sql->bind_param("i", $id);
         $sql->execute();
         $result = $sql->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -23,17 +25,19 @@ class Category_Database extends Database
     }
 
     // Thêm danh mục mới
-    public function addCategory($name)
+    public function addCategory($name, $description)
     {
-        $sql = self::$connection->prepare("INSERT INTO categories (name) VALUES (?)");
-        $sql->bind_param("s", $name);
+        $connection = Database::getConnection();
+        $sql = $connection->prepare("INSERT INTO categories (CategoryName, Description) VALUES (?, ?)");
+        $sql->bind_param("ss", $name, $description);
         return $sql->execute();
     }
 
     // Cập nhật danh mục
     public function updateCategory($id, $name)
     {
-        $sql = self::$connection->prepare("UPDATE categories SET name=? WHERE id=?");
+        $connection = Database::getConnection();
+        $sql = $connection->prepare("UPDATE categories SET name=? WHERE id=?");
         $sql->bind_param("si", $name, $id);
         return $sql->execute();
     }
@@ -41,7 +45,8 @@ class Category_Database extends Database
     // Xóa danh mục
     public function deleteCategory($id)
     {
-        $sql = self::$connection->prepare("DELETE FROM categories WHERE id=?");
+        $connection = Database::getConnection();
+        $sql = $connection->prepare("DELETE FROM categories WHERE id=?");
         $sql->bind_param("i", $id);
         return $sql->execute();
     }
@@ -49,8 +54,9 @@ class Category_Database extends Database
     // Tìm kiếm danh mục theo tên
     public function searchCategories($keyword)
     {
+        $connection = Database::getConnection();
         $keyword = "%$keyword%";
-        $sql = self::$connection->prepare("SELECT * FROM categories WHERE name LIKE ?");
+        $sql = $connection->prepare("SELECT * FROM categories WHERE name LIKE ?");
         $sql->bind_param("s", $keyword);
         $sql->execute();
         return $sql->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -59,7 +65,8 @@ class Category_Database extends Database
     // Lấy sản phẩm theo danh mục
     public function getProductsByCategory($categoryId)
     {
-        $sql = self::$connection->prepare("SELECT * FROM products WHERE category_id = ?");
+        $connection = Database::getConnection();
+        $sql = $connection->prepare("SELECT * FROM products WHERE CategoryID = ?");
         $sql->bind_param("i", $categoryId);
         $sql->execute();
         return $sql->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -68,7 +75,8 @@ class Category_Database extends Database
     // Lấy sản phẩm mới nhất
     public function getLatestProducts($limit = 5)
     {
-        $sql = self::$connection->prepare("SELECT * FROM products ORDER BY created_at DESC LIMIT ?");
+        $connection = Database::getConnection();
+        $sql = $connection->prepare("SELECT * FROM products ORDER BY created_at DESC LIMIT ?");
         $sql->bind_param("i", $limit);
         $sql->execute();
         return $sql->get_result()->fetch_all(MYSQLI_ASSOC);

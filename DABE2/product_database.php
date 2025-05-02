@@ -1,5 +1,5 @@
 <?php
-require_once 'database.php'; // Kết nối database
+require_once './includes/database.php'; // Kết nối database
 
 class Product_Database extends Database
 {
@@ -84,6 +84,7 @@ class Product_Database extends Database
 
         return $searchResults;
     }
+
 
     // Lấy sản phẩm mới nhất
     public function getLatestProducts($limit = 5)
